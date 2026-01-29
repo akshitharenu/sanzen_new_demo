@@ -1,0 +1,57 @@
+import 'api_service.dart';
+
+class AuthService {
+  static Future<Map<String, dynamic>> signUp({
+    required String firstName,
+    required String lastName,
+    required String email,
+    required String password,
+  }) async {
+    return await ApiService.post('/auth/signup', {
+      'firstName': firstName,
+      'lastName': lastName,
+      'email': email,
+      'password': password,
+    });
+  }
+
+  static Future<Map<String, dynamic>> signIn({
+    required String email,
+    required String password,
+  }) async {
+    return await ApiService.post('/auth/signin', {
+      'email': email,
+      'password': password,
+    });
+  }
+
+  static Future<Map<String, dynamic>> forgotPassword({
+    required String email,
+  }) async {
+    return await ApiService.post('/auth/forgot-password', {
+      'email': email,
+    });
+  }
+
+  static Future<Map<String, dynamic>> verifyOtp({
+    required String email,
+    required String otp,
+  }) async {
+    return await ApiService.post('/auth/verify-otp', {
+      'email': email,
+      'otp': otp,
+    });
+  }
+
+  static Future<Map<String, dynamic>> resetPassword({
+    required String email,
+    required String otp,
+    required String newPassword,
+  }) async {
+    return await ApiService.post('/auth/reset-password', {
+      'email': email,
+      'otp': otp,
+      'newPassword': newPassword,
+    });
+  }
+}
