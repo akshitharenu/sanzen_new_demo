@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/services/auth_service.dart';
-import 'forgot_password_page.dart';
-import 'sign_up_page.dart';
+import '../../../home/presentation/pages/home_page.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
@@ -17,8 +15,8 @@ class _SignInPageState extends State<SignInPage> {
   final _passwordController = TextEditingController();
   final _emailFocusNode = FocusNode();
   final _passwordFocusNode = FocusNode();
-  bool _isLoading = false;
   bool _obscurePassword = true;
+  bool _rememberMe = true;
   bool _emailHasFocus = false;
   bool _passwordHasFocus = false;
 
@@ -42,42 +40,13 @@ class _SignInPageState extends State<SignInPage> {
     super.dispose();
   }
 
-  bool get _isFormValid {
-    return _emailController.text.isNotEmpty &&
-           _passwordController.text.isNotEmpty;
-  }
-
-  void _handleSignIn() async {
-    if (_formKey.currentState!.validate()) {
-      setState(() => _isLoading = true);
-
-      final result = await AuthService.signIn(
-        email: _emailController.text.trim(),
-        password: _passwordController.text,
-      );
-
-      if (mounted) {
-        setState(() => _isLoading = false);
-
-        if (result['success']) {
-          // TODO: Save tokens and navigate to home
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Welcome ${result['data']['user']['firstName']}!'),
-              backgroundColor: AppColors.primaryGreen,
-            ),
-          );
-          // Navigate to home page (to be implemented)
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(result['error'] ?? 'Sign in failed'),
-              backgroundColor: AppColors.error,
-            ),
-          );
-        }
-      }
-    }
+  void _handleSignIn() {
+    // Dummy login — just navigate to HomePage
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (_) => const HomePage()),
+      (route) => false,
+    );
   }
 
   @override
@@ -87,125 +56,130 @@ class _SignInPageState extends State<SignInPage> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Form(
               key: _formKey,
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 80),
-                  // Sanzen Logo with text
+                  const SizedBox(height: 60),
+                  // Sanzen Logo
                   Image.asset(
                     'assets/images/Group 2043686807-1.png',
-                    height: 50,
+                    height: 45,
                   ),
-                  const SizedBox(height: 120),
+                  const SizedBox(height: 50),
+                  // Welcome Back
+                  const Text(
+                    'Welcome Back',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.primaryGreen,
+                    ),
+                  ),
+                  const SizedBox(height: 30),
                   // Email Field
                   _buildTextField(
                     controller: _emailController,
                     focusNode: _emailFocusNode,
-                    hintText: 'Email Address',
+                    hintText: 'Email',
                     hasFocus: _emailHasFocus,
+                    prefixIcon: Icons.email_outlined,
                     keyboardType: TextInputType.emailAddress,
                     textInputAction: TextInputAction.next,
                     onChanged: (_) => setState(() {}),
                   ),
-                  const SizedBox(height: 14),
+                  const SizedBox(height: 16),
                   // Password Field
                   _buildTextField(
                     controller: _passwordController,
                     focusNode: _passwordFocusNode,
                     hintText: 'Password',
                     hasFocus: _passwordHasFocus,
+                    prefixIcon: Icons.more_horiz,
                     isPassword: true,
                     textInputAction: TextInputAction.done,
                     onSubmitted: (_) => _handleSignIn(),
                     onChanged: (_) => setState(() {}),
                   ),
                   const SizedBox(height: 12),
-                  // Forgot Password
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const ForgotPasswordPage(),
+                  // Remember me + Forgot Password row
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // Remember me
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: Checkbox(
+                              value: _rememberMe,
+                              onChanged: (val) {
+                                setState(() => _rememberMe = val ?? false);
+                              },
+                              activeColor: AppColors.primaryGreen,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              side: const BorderSide(
+                                color: AppColors.grey,
+                                width: 1.5,
+                              ),
+                              materialTapTargetSize:
+                                  MaterialTapTargetSize.shrinkWrap,
+                            ),
                           ),
-                        );
-                      },
-                      style: TextButton.styleFrom(
-                        padding: EdgeInsets.zero,
-                        minimumSize: Size.zero,
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          const SizedBox(width: 8),
+                          const Text(
+                            'Remember me',
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w400,
+                              color: AppColors.darkGrey,
+                            ),
+                          ),
+                        ],
                       ),
-                      child: const Text(
-                        'Forgot Password?',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: AppColors.primaryGreen,
+                      // Forgot Password
+                      GestureDetector(
+                        onTap: () {
+                          // No action for dummy app
+                        },
+                        child: const Text(
+                          'Forgot Password?',
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                            color: AppColors.primaryGreen,
+                            decoration: TextDecoration.underline,
+                            decorationColor: AppColors.primaryGreen,
+                          ),
                         ),
                       ),
-                    ),
+                    ],
                   ),
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 32),
                   // Sign In Button
                   _buildSignInButton(),
-                  const SizedBox(height: 40),
-                  // Divider with "Or Sign in with"
+                  const SizedBox(height: 30),
+                  // Divider with "OR"
                   _buildDivider(),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 30),
                   // Google Button
                   _buildSocialButton(
                     iconAsset: 'assets/images/Group 2043686813.png',
-                    label: 'Sign in with Google',
-                    onPressed: () {
-                      // TODO: Implement Google sign in
-                    },
+                    label: 'Continue with Google',
+                    onPressed: _handleSignIn,
                   ),
                   const SizedBox(height: 14),
                   // Facebook Button
                   _buildSocialButton(
                     iconAsset: 'assets/images/Group 2043686815.png',
-                    label: 'Sign in with Facebook',
-                    onPressed: () {
-                      // TODO: Implement Facebook sign in
-                    },
-                  ),
-                  const SizedBox(height: 50),
-                  // Sign Up Link
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        "Don't have an account? ",
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: AppColors.darkGrey,
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const SignUpPage(),
-                            ),
-                          );
-                        },
-                        child: const Text(
-                          'Sign Up',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.primaryGreen,
-                          ),
-                        ),
-                      ),
-                    ],
+                    label: 'Continue with Facebook',
+                    onPressed: _handleSignIn,
                   ),
                   const SizedBox(height: 40),
                 ],
@@ -222,6 +196,7 @@ class _SignInPageState extends State<SignInPage> {
     required FocusNode focusNode,
     required String hintText,
     required bool hasFocus,
+    required IconData prefixIcon,
     bool isPassword = false,
     TextInputType? keyboardType,
     TextInputAction? textInputAction,
@@ -232,10 +207,10 @@ class _SignInPageState extends State<SignInPage> {
     final bool isActive = hasFocus || hasContent;
 
     return Container(
-      height: 48,
+      height: 50,
       decoration: BoxDecoration(
         color: AppColors.white,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(25),
         border: Border.all(
           color: isActive ? AppColors.primaryGreen : AppColors.lightGrey,
           width: 1,
@@ -261,8 +236,13 @@ class _SignInPageState extends State<SignInPage> {
           ),
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(
-            horizontal: 24,
-            vertical: 14,
+            horizontal: 8,
+            vertical: 15,
+          ),
+          prefixIcon: Icon(
+            prefixIcon,
+            color: isActive ? AppColors.primaryGreen : AppColors.grey,
+            size: 20,
           ),
           suffixIcon: isPassword
               ? IconButton(
@@ -279,12 +259,6 @@ class _SignInPageState extends State<SignInPage> {
                 )
               : null,
         ),
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return null; // We handle validation visually
-          }
-          return null;
-        },
       ),
     );
   }
@@ -292,41 +266,29 @@ class _SignInPageState extends State<SignInPage> {
   Widget _buildSignInButton() {
     return SizedBox(
       width: double.infinity,
-      height: 48,
+      height: 50,
       child: DecoratedBox(
         decoration: BoxDecoration(
-          gradient: _isFormValid
-              ? AppColors.primaryGradient
-              : null,
-          color: _isFormValid ? null : AppColors.grey,
-          borderRadius: BorderRadius.circular(24),
+          gradient: AppColors.primaryGradient,
+          borderRadius: BorderRadius.circular(25),
         ),
         child: ElevatedButton(
-          onPressed: _isLoading ? null : (_isFormValid ? _handleSignIn : null),
+          onPressed: _handleSignIn,
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.transparent,
             shadowColor: Colors.transparent,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(24),
+              borderRadius: BorderRadius.circular(25),
             ),
           ),
-          child: _isLoading
-              ? const SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: AppColors.white,
-                  ),
-                )
-              : const Text(
-                  'Sign In',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.white,
-                  ),
-                ),
+          child: const Text(
+            'Sign in',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: AppColors.white,
+            ),
+          ),
         ),
       ),
     );
@@ -344,7 +306,7 @@ class _SignInPageState extends State<SignInPage> {
         const Padding(
           padding: EdgeInsets.symmetric(horizontal: 16),
           child: Text(
-            'Or Sign in with',
+            'OR',
             style: TextStyle(
               fontSize: 14,
               color: AppColors.grey,
@@ -368,14 +330,14 @@ class _SignInPageState extends State<SignInPage> {
   }) {
     return SizedBox(
       width: double.infinity,
-      height: 48,
+      height: 50,
       child: OutlinedButton(
         onPressed: onPressed,
         style: OutlinedButton.styleFrom(
           backgroundColor: AppColors.white,
           side: const BorderSide(color: AppColors.lightGrey),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(24),
+            borderRadius: BorderRadius.circular(25),
           ),
         ),
         child: Row(

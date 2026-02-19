@@ -1,6 +1,7 @@
 import {
   Controller,
   Post,
+  Get,
   Body,
   HttpCode,
   HttpStatus,
@@ -16,10 +17,11 @@ import {
   ResetPasswordDto,
   RefreshTokenDto,
 } from './dto/auth.dto';
+import { JwtAuthGuard } from './jwt-auth.guard';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
   @Post('signin')
   @HttpCode(HttpStatus.OK)
@@ -30,6 +32,12 @@ export class AuthController {
   @Post('signup')
   async signUp(@Body() dto: SignUpDto) {
     return this.authService.signUp(dto);
+  }
+
+  @Get('me')
+  @UseGuards(JwtAuthGuard)
+  async getProfile(@Request() req: any) {
+    return this.authService.getProfile(req.user.id);
   }
 
   @Post('forgot-password')
@@ -58,9 +66,10 @@ export class AuthController {
   }
 
   @Post('logout')
+  @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   async logout(@Request() req: any) {
-    const userId = req.user?.sub;
-    return this.authService.logout(userId);
+    return this.authService.logout(req.user.id);
   }
 }
+

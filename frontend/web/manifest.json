@@ -1,6 +1,6 @@
 {
-    "name": "mobile_erp_app",
-    "short_name": "mobile_erp_app",
+    "name": "Sanzen",
+    "short_name": "Sanzen",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

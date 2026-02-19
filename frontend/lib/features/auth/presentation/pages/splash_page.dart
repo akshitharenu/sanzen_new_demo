@@ -80,27 +80,10 @@ class _SplashPageState extends State<SplashPage> with SingleTickerProviderStateM
             );
           },
           child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Gold Sanzen arch logo
-                Image.asset(
-                  'assets/images/Group 2043686807.png',
-                  width: 80,
-                  height: 80,
-                ),
-                const SizedBox(height: 16),
-                // SANZEN text in white
-                const Text(
-                  'SANZEN',
-                  style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.white,
-                    letterSpacing: 6,
-                  ),
-                ),
-              ],
+            child: Image.asset(
+              'assets/images/Group 2043686807.png',
+              width: 200,
+              height: 200,
             ),
           ),
         ),

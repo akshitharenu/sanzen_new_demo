@@ -2,6 +2,7 @@
 node_modules/
 .dart_tool/
 .packages
+claude/
 
 # Environment
 .env

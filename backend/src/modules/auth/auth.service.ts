@@ -26,7 +26,7 @@ export class AuthService {
     private jwtService: JwtService,
     private configService: ConfigService,
     private mailService: MailService,
-  ) {}
+  ) { }
 
   async signIn(dto: SignInDto) {
     const user = await this.prisma.user.findUnique({
@@ -191,6 +191,30 @@ export class AuthService {
       data: { refreshToken: null },
     });
     return { message: 'Logged out successfully' };
+  }
+
+  async getProfile(userId: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        email: true,
+        phone: true,
+        firstName: true,
+        lastName: true,
+        avatar: true,
+        role: true,
+        isEmailVerified: true,
+        isPhoneVerified: true,
+        createdAt: true,
+      },
+    });
+
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+
+    return { user };
   }
 
   private async generateTokens(userId: string, email: string, role: string) {
