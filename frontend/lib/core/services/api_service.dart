@@ -6,7 +6,7 @@ class ApiService {
   // Using localhost with ADB reverse port forwarding (adb reverse tcp:3000 tcp:3000)
   // For emulator use: http://10.0.2.2:3000/api/v1
   // For real device without ADB, use your computer's local IP: http://192.168.70.249:3000/api/v1
-  static const String baseUrl = 'http://localhost:3000/api/v1';
+  static const String baseUrl = 'http://10.110.40.80:3000/api/v1';
 
   static Future<Map<String, dynamic>> post(
     String endpoint,
