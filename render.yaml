@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: sanzen-api
+    env: node
+    rootDir: backend
+    buildCommand: npm install -g @nestjs/cli && npm install && npm run build
+    startCommand: npm run start:prod
+    envVars:
+      - key: NODE_ENV
+        value: production
